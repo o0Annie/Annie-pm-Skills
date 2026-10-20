@@ -19,6 +19,18 @@ for d in Annie-pm-Skills/*/; do ln -s "$(pwd)/$d" ~/.claude/skills/; done
 
 ---
 
+## 零、项目起步
+
+所有工作开始前，先把项目目录规范化，后续调研、需求、PRD、验收都在同一个项目上下文里进行。
+
+- [**pm-project-init**](./pm-project-init/) — 产品项目初始化脚手架，整理自 [@runmaotui](https://x.com/runmaotui/status/2100156767137415210) 的《产品项目初始化 Prompt》。生成 `00-rules/` ~ `99-archive/` 编号目录、规则文件（命名约定 / 唯一事实源 / 需求状态门槛 / 产品工作流）、`AGENTS.md` + `CLAUDE.md`、输入来源登记表和需求池表。脚本只新建、不覆盖已有文件，支持 6 状态 / 10 状态两种需求状态集。
+  - `SKILL.md` + `templates/`（项目模板）+ `variants/`（状态集）+ `scripts/init_project.py`（生成脚本）+ `scripts/session_start_check.py`（自动触发 hook）
+  - 可选：在 `~/.claude/settings.json` 的 `hooks.SessionStart` 数组中加入下面这条，在空目录打开 Claude Code 时自动提示初始化：
+
+    ```json
+    { "hooks": [{ "type": "command", "command": "python3 \"$HOME/.claude/skills/pm-project-init/scripts/session_start_check.py\" 2>/dev/null || true", "timeout": 10 }] }
+    ```
+
 ## 一、调研与决策
 
 写 PRD 之前，先把「要不要做」「做成什么样」想清楚。
@@ -64,7 +76,9 @@ for d in Annie-pm-Skills/*/; do ln -s "$(pwd)/$d" ~/.claude/skills/; done
 
 ## 外部依赖说明
 
-多数 skill 开箱即用，以下两个有额外依赖：
+多数 skill 开箱即用，以下几个有额外依赖：
+
+- **pm-project-init** — 需要 `python3`（3.9+，仅用标准库）。自动触发 hook 需手动加入 `settings.json`，见上文。
 
 - **prdtolark** — 需要 `lark-cli`、`npx`、`sips`、`python3`。`SKILL.md` 中引用的 `../lark-shared/SKILL.md` 属于飞书官方 skill 套件（认证与权限约定），不在本仓库内，需另行安装。
 - **competitor-research** — 需要 `lark-cli`、`sips`、`python3`，以及 Playwright MCP（用于实测竞品页面）。
